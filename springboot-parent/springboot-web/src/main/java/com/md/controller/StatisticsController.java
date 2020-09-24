@@ -14,7 +14,7 @@ public class StatisticsController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("/report/type/1")
+    @GetMapping("/reports/type/1")
     public Result findAllReport() throws Exception{
         ReportResult report = reportService.findAllReport();
         Meta meta = Meta.succ("获取报表成功");

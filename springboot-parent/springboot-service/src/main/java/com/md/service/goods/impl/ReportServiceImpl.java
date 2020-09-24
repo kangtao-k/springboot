@@ -5,6 +5,7 @@ import com.md.entity.other.AreaStyle;
 import com.md.entity.other.Legend;
 import com.md.entity.other.Series;
 import com.md.entity.goodsVo.ReportResult;
+import com.md.entity.other.XAxis;
 import com.md.service.goods.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,17 +34,20 @@ public class ReportServiceImpl implements ReportService {
         map.put("type","value");
         List<HashMap<String, String>> listY = new ArrayList<>();
         listY.add(map);
-        reportResult.setYAxis(listY);
+        reportResult.setyAxis(listY);
 //        x轴数据
         List<String> listX = reportDao.findAllDate();
-        reportResult.setXAxis(listX);
+        XAxis xAxis = new XAxis();
+        xAxis.setData(listX);
+        ArrayList<XAxis> list = new ArrayList<>();
+        list.add(xAxis);
+        reportResult.setxAxis(list);
 //        series数据
-        Series series = new Series();
         List<Series> seriesList = new ArrayList<>();
         AreaStyle areaStyle = new AreaStyle();
         for (String name : dataName) {
+            Series series = new Series();
             List<Integer> dataUsers = reportDao.findReportByName(name);// 找到用户数
-            System.out.println(dataUsers);
             series.setAreaStyle(areaStyle);
             series.setName(name);
             series.setData(dataUsers);

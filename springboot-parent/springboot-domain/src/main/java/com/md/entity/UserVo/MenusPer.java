@@ -10,7 +10,9 @@ import java.util.List;
 public class MenusPer implements Serializable {
 
     private Integer id;
+    private Integer pid;
     private String authName;
     private String path;
     private List<MenusPer> children =  new ArrayList<>();
+    private Integer order;
 }

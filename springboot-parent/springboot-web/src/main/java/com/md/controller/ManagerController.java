@@ -27,7 +27,8 @@ public class ManagerController {
 
     //登录
     @PostMapping(value = "/login")
-    public Result loginManager(@RequestBody(required = false) Map<String, String> map) throws Exception {
+    public Result loginManager(@RequestBody(required = true) Map<String, String> map) throws Exception {
+
         String username = map.get("username");
         String password = map.get("password");
         ManagerLogin login = managerService.loginManager(username, MD5.getMD5(password));
