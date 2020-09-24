@@ -121,6 +121,12 @@ public class SpGoodsApplication {
         return r;
     }
 
+    /**
+     * 删除商品
+     * @param id
+     * @return
+     * @throws Exception
+     */
     @DeleteMapping(value = "/goods/{id}")
     public Result deleteGoodsById(@PathVariable(required = true) Integer id) throws Exception {
         goodsService.deleteGoodsById(id);

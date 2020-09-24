@@ -67,23 +67,28 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Attribute> findAllCatAttrById(Integer id) throws Exception {
-        List<Attribute> list = categoryDao.findAllCatAttrById(id);
+    public List<Attribute> findAllCatAttrById(Integer id,String sel) throws Exception {
+        List<Attribute> list = categoryDao.findAllCatAttrById(id,sel);
         return list;
     }
 
     @Override
-    public Attribute addCatAttr(Attribute attribute) throws Exception {
-        categoryDao.addCatAttr(attribute);
-        Attribute attrs = categoryDao.findCatAttrByName(attribute.getAttr_name());
-        Attribute attr = categoryDao.findCatAttrById(attrs.getAttr_id());
+    public Attribute addCatAttr(Integer cat_id,String attr_name,String sel) throws Exception {
+        String attr_write = null;
+        if ("many".equals(sel)) {
+            attr_write = "list";
+        }
+        if ("only".equals(sel)) {
+            attr_write = "manual";
+        }
+        categoryDao.addCatAttr(cat_id,attr_name,sel,attr_write);
+        Attribute attr = categoryDao.findCatAttrByName(cat_id,attr_name,sel);
         return attr;
     }
 
     @Override
     public void deleteCatAttr(Integer id, Integer attrId) throws Exception {
-        categoryDao.deleteCatAttrById(attrId);
-        categoryDao.deleteCatsById(id);
+        categoryDao.deleteCatAttrById(id,attrId);
     }
 
     @Override
@@ -92,9 +97,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Attribute editCatAttrById(Attribute attribute) throws Exception {
-        categoryDao.editCatAttrById(attribute);
-        Attribute attr = categoryDao.findCatAttrById(attribute.getAttr_id());
+    public Attribute editCatAttrById(Integer id, Integer attrId, String attr_name, String attr_sel) throws Exception {
+        categoryDao.editCatAttrById(id,attrId,attr_name,attr_sel);
+        Attribute attr = categoryDao.findCatAttrById(attrId);
         return attr;
     }
 

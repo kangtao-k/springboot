@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class CategoriesApplication {
@@ -25,12 +26,17 @@ public class CategoriesApplication {
      * @throws Exception
      */
     @GetMapping("/categories")
-    public Result findAllCats(@RequestParam Integer type,@RequestParam Integer pagenum,
-                              @RequestParam Integer pagesize) throws Exception{
+    public Result findAllCats(@RequestParam(required = false) Integer type,@RequestParam(required = false) Integer pagenum,
+                              @RequestParam(required = false) Integer pagesize) throws Exception{
+        if (null == type || null == pagenum || null == pagesize) {
+            List<ChildrenCats> allCats = categoryService.findAllCats(3,1,5);
+            Result result = Result.succ("获取成功", allCats);
+            return result;
+        }
         List<ChildrenCats> allCats = categoryService.findAllCats(type,pagenum,pagesize);
         Integer total = categoryService.findTotalCats();
         CategoryPageResult pageResult = CategoryPageResult.succ(total, pagenum - 1, pagesize, allCats);
-        Result result = Result.succ(meta, pageResult);
+        Result result = Result.succ("获取成功", pageResult);
         return result;
     }
 
@@ -96,8 +102,8 @@ public class CategoriesApplication {
      */
     @GetMapping("/categories/{id}/attributes")
     public Result findCatAttrById(@PathVariable(required = true) Integer id,
-                                  @RequestParam String attr_sel) throws Exception{
-        List<Attribute> list = categoryService.findAllCatAttrById(id);
+                                  @RequestParam String sel) throws Exception{
+        List<Attribute> list = categoryService.findAllCatAttrById(id,sel);
         Result result = Result.succ(meta, list);
         return result;
     }
@@ -110,16 +116,11 @@ public class CategoriesApplication {
      */
     @PostMapping("/categories/{id}/attributes")
     public Result addCatAttr(@PathVariable Integer id,
-                             @RequestParam(required = true) String attr_name,
-                             @RequestParam(required = true) String attr_sel,
-                             @RequestParam(required = false) String attr_vals) throws Exception{
-        Attribute attribute = new Attribute();
-        attribute.setCat_id(id);
-        attribute.setAttr_name(attr_name);
-        attribute.setAttr_sel(attr_sel);
-        attribute.setAttr_vals(attr_vals);
-        attribute.setAttr_write("list");
-        Attribute attr = categoryService.addCatAttr(attribute);
+                             @RequestBody Map<String,String> map) throws Exception{
+        String attr_name = map.get("attr_name");
+        String attr_sel = map.get("attr_sel");
+        Attribute attr = categoryService.addCatAttr(id,attr_name,attr_sel);
+        Meta meta = Meta.succ(201, "创建成功");
         Result result = Result.succ(meta, attr);
         return result;
     }
@@ -160,24 +161,15 @@ public class CategoriesApplication {
      * 编辑提交参数
      * @param id
      * @param attrId
-     * @param attr_name
-     * @param attr_sel
-     * @param attr_vals
      * @return
      * @throws Exception
      */
     @PutMapping("/categories/{id}/attributes/{attrId}")
     public Result editCatAttrById(@PathVariable Integer id,@PathVariable Integer attrId,
-                                  @RequestParam String attr_name,@RequestParam String attr_sel,
-                                  @RequestParam(required = false) String attr_vals) throws Exception{
-        Attribute attribute = new Attribute();
-        attribute.setCat_id(id);
-        attribute.setAttr_id(attrId);
-        attribute.setAttr_name(attr_name);
-        attribute.setAttr_sel(attr_sel);
-        attribute.setAttr_write("manual");
-        attribute.setAttr_vals(attr_vals);
-        Attribute attr = categoryService.editCatAttrById(attribute);
+                                  @RequestBody Map<String,String> map) throws Exception{
+        String attr_name = map.get("attr_name");
+        String attr_sel = map.get("attr_sel");
+        Attribute attr = categoryService.editCatAttrById(id,attrId,attr_name,attr_sel);
         Result result = Result.succ(meta, attr);
         return result;
     }

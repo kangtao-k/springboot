@@ -76,4 +76,10 @@ public class OrdersServiceImpl implements OrdersService {
         List<Express> expressList = ordersDao.findExpressById(id);
         return expressList;
     }
+
+    @Override
+    public Integer findTotalOrders() throws Exception {
+        Integer total = ordersDao.findTotalOrders();
+        return total;
+    }
 }

@@ -26,9 +26,11 @@ public class OrdersController {
      * @throws Exception
      */
     @GetMapping("/orders")
-    public OrderPageResult findAllOrders(@RequestParam Integer pagenum, @RequestParam Integer pagesize) throws Exception{
+    public Result findAllOrders(@RequestParam(required = false) String query,@RequestParam Integer pagenum, @RequestParam Integer pagesize) throws Exception{
         List<Orders> orders = ordersService.findAllOrders(pagenum,pagesize);
-        OrderPageResult result = OrderPageResult.succ(pagenum,pagesize,orders,meta);
+        Integer total = ordersService.findTotalOrders();
+        OrderPageResult orderResult = OrderPageResult.succ(total,Integer.toString(pagenum),orders);
+        Result result = Result.succ("获取成功", orderResult);
         return result;
     }
 

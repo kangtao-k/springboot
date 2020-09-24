@@ -10,17 +10,15 @@ import java.util.List;
 @Data
 public class OrderPageResult implements Serializable {
 
-    private Integer pageNum;// 当前页码
-    private Integer pageSize;// 每页显示条数
+    private Integer total;// 总条数
+    private String pageNum;// 当前页码
     private List<Orders> goods;// 商品信息
-    private Meta meta;
 
-    public static OrderPageResult succ(Integer pageNum,Integer pageSize,List<Orders> orders,Meta meta){
+    public static OrderPageResult succ(Integer total,String pageNum,List<Orders> orders){
         OrderPageResult result = new OrderPageResult();
+        result.setTotal(total);
         result.setPageNum(pageNum);
-        result.setPageSize(pageSize);
         result.setGoods(orders);
-        result.setMeta(meta);
         return result;
     }
 }

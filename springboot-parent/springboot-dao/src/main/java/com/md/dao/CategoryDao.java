@@ -33,25 +33,24 @@ public interface CategoryDao {
     @Delete("delete from sp_category where cat_id=#{id}")
     void deleteCatsById(Integer id);
 
-    @Select("select * from sp_attribute where cat_id=#{id}")
-    List<Attribute> findAllCatAttrById(Integer id);
+    @Select("select * from sp_attribute where cat_id=#{id} and attr_sel=#{sel}")
+    List<Attribute> findAllCatAttrById(Integer id,String sel);
 
-    @Insert("insert into sp_attribute values(null,#{attr_name},#{cat_id},#{attr_sel},#{attr_write},#{attr_vals},#{delete_time})")
-    void addCatAttr(Attribute attribute);
-
-    @Select("select * from sp_attribute where attr_name=#{attr_name}")
-    Attribute findCatAttrByName(String attr_name);
+    @Select("select * from sp_attribute where attr_name=#{attr_name} and cat_id=#{cat_id} and attr_sel=#{sel}")
+    Attribute findCatAttrByName(Integer cat_id,String attr_name,String sel);
 
     @Select("select * from sp_attribute where attr_id=#{attrId}")
     Attribute findCatAttrById(Integer attrId);
 
     @Delete("delete from sp_attribute where attr_id=#{attrId}")
-    void deleteCatAttrById(Integer attrId);
+    void deleteCatAttrById(Integer id, Integer attrId);
 
-    @Update("update sp_attribute set attr_name=#{attr_name},cat_id=#{cat_id},attr_write=#{attr_write}," +
-            "attr_sel=#{attr_sel},attr_vals=#{attr_vals} where attr_id=#{attr_id}")
-    void editCatAttrById(Attribute attribute);
+    @Update("update sp_attribute set attr_name=#{attr_name},cat_id=#{id},attr_sel=#{attr_sel} where attr_id=#{attrId}")
+    void editCatAttrById(Integer id, Integer attrId, String attr_name, String attr_sel);
 
     @Select("select count(*) from sp_category where cat_level=0")
     Integer findTotalCats();
+
+    @Insert("insert into sp_attribute values(null,#{attr_name},#{cat_id},#{sel},#{attr_write},'支持',null)")
+    void addCatAttr(Integer cat_id, String attr_name, String sel,String attr_write);
 }
