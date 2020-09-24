@@ -4,9 +4,7 @@ import lombok.Data;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.soap.Text;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * 商品属性实体类
