@@ -12,14 +12,11 @@ import java.util.Map;
 @Mapper
 public interface CategoryDao {
 
-    @Select("select * from sp_category where cat_pid=0")
-    List<ChildrenCats> findFirstCats();
+    @Select("select * from sp_category where cat_level=0 limit #{i},#{pagesize}")
+    List<ChildrenCats> findFirstCats(int i, Integer pagesize);
 
-    @Select("select * from sp_category where cat_level=1")
-    List<ChildrenCats> findSecondCats();
-
-    @Select("select * from sp_category where cat_level=2 limit 10")
-    List<ChildrenCats> findThirdCats();
+    @Select("select * from sp_category where cat_level=#{level} and cat_pid=#{pid}")
+    List<ChildrenCats> findCats(Integer level,Integer pid);
 
     @Insert("insert into sp_category values(null,#{cat_name},#{cat_pid},#{cat_level},#{i},null,null)")
     void addCategories(Integer cat_pid, String cat_name, Integer cat_level, int i);
@@ -54,4 +51,7 @@ public interface CategoryDao {
     @Update("update sp_attribute set attr_name=#{attr_name},cat_id=#{cat_id},attr_write=#{attr_write}," +
             "attr_sel=#{attr_sel},attr_vals=#{attr_vals} where attr_id=#{attr_id}")
     void editCatAttrById(Attribute attribute);
+
+    @Select("select count(*) from sp_category where cat_level=0")
+    Integer findTotalCats();
 }
