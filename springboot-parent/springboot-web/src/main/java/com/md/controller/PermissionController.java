@@ -54,7 +54,7 @@ public class PermissionController {
 //        获取claims
         String userId = claims.getId();
         ManagerLogin manager = managerService.findById(Integer.parseInt(userId));*/
-        MenusPer menus = permissionService.menusPer();
+        List<MenusPer> menus = permissionService.menusPer();
         return Result.succ("获取菜单列表成功",menus);
     }
 }

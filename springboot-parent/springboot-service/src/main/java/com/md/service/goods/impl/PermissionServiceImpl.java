@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -26,7 +28,7 @@ public class PermissionServiceImpl implements PermissionService {
     private IPer_apiDao apiDao;
 
     @Override
-    public List<Perfind>  findPerlist() throws Exception {
+    public List<Perfind> findPerlist() throws Exception {
         List<Permission> pers = perDao.findPer();
         List<Perfind> list = new ArrayList<>();
         Perfind find;
@@ -51,8 +53,8 @@ public class PermissionServiceImpl implements PermissionService {
         List<PerTree> perlist1 = new ArrayList<>();
         //将信息放进封装类中，暂时不放子权限
         for (Permission per : per1) {
-             pertree1 = PermissionServiceImpl.setfind(apiDao, per);
-             perlist1.add(pertree1);
+            pertree1 = PermissionServiceImpl.setfind(apiDao, per);
+            perlist1.add(pertree1);
         }
 
         //找出所有二级权限
@@ -73,7 +75,7 @@ public class PermissionServiceImpl implements PermissionService {
 
         //将信息封装到类中，暂时不放进pid
         for (Permission per : per3) {
-            last =  new PerTreeLast();
+            last = new PerTreeLast();
             last.setId(per.getPs_id());
             last.setAuthName(per.getPs_name());
             String path = apiDao.pathById(per.getPs_id());
@@ -83,12 +85,12 @@ public class PermissionServiceImpl implements PermissionService {
         }
         for (PerTree p1 : perlist1) {
             for (PerTree p2 : perlist2) {
-                if(p1.getId().equals(p2.getPid())){
+                if (p1.getId().equals(p2.getPid())) {
                     //将数据放进p1中
                     p1.getChildren().add(p2);
                     for (PerTreeLast p3 : perlist3) {
-                        if((p2.getId().toString()).equals(p3.getPid())){
-                            p3.setPid((p1.getId())+","+(p2.getId()));
+                        if ((p2.getId().toString()).equals(p3.getPid())) {
+                            p3.setPid((p1.getId()) + "," + (p2.getId()));
                             p2.getChildren().add(p3);
                         }
                     }
@@ -99,17 +101,38 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public MenusPer menusPer() throws Exception {
-        Permission per = perDao.findByName("商品管理");
-        MenusPer menus = PermissionServiceImpl.perToMen(apiDao, per);
-        Permission per2 = perDao.findByName("商品列表");
-        MenusPer menus1 = PermissionServiceImpl.perToMen(apiDao, per2);
-        menus.getChildren().add(menus1);
-        return menus;
+    public List<MenusPer> menusPer() throws Exception {
+        List<Permission> secondPers = perDao.findByNotPid();// 查出第二层的菜单列表
+        List<Permission> pers = perDao.findByPid();// 查询出最顶层的菜单列表
+        List<MenusPer> menusList = new ArrayList<>();
+//        将per转为Men
+        for (Permission permission : pers) {
+            MenusPer menus = perToMen(apiDao, permission);
+            menusList.add(menus);
+        }
+        List<MenusPer> secondList = new ArrayList<>();
+//        将per转为Men
+        for (Permission secondPer : secondPers) {
+            MenusPer secondMenusPer = perToMen(apiDao, secondPer);
+            secondList.add(secondMenusPer);
+        }
+//        将子集套入父级
+        for (MenusPer menusPer : menusList) {
+            List<MenusPer> list = new ArrayList<>();// 转接list
+            for (MenusPer secondPer : secondList) {
+                if (menusPer.getId().equals(secondPer.getPid())) {
+                    list.add(secondPer);
+                }
+            }
+            menusPer.setChildren(list);
+        }
+//        按照MenusPer的order排序
+        menusList = menusList.stream().sorted(Comparator.comparing(MenusPer::getOrder)).collect(Collectors.toList());
+        return menusList;
     }
 
     //将Permission对象的值放进PerTree里
-    public static PerTree setfind(IPer_apiDao apiDao ,Permission per) throws Exception {
+    public static PerTree setfind(IPer_apiDao apiDao, Permission per) throws Exception {
         PerTree perTree = new PerTree();
         perTree.setId(per.getPs_id());
         perTree.setAuthName(per.getPs_name());
@@ -120,12 +143,37 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     //将Permission对象的值放进MenusPer里
-    public static MenusPer perToMen(IPer_apiDao apiDao ,Permission per) throws Exception {
+    public static MenusPer perToMen(IPer_apiDao apiDao, Permission per) throws Exception {
         MenusPer menus = new MenusPer();
         menus.setId(per.getPs_id());
+        menus.setPid(per.getPs_pid());
         menus.setAuthName(per.getPs_name());
         String path1 = apiDao.pathById(per.getPs_id());
         menus.setPath(path1);
+        if ("用户管理".equals(per.getPs_name())) {
+            menus.setOrder(1);
+        }
+        if ("权限管理".equals(per.getPs_name())) {
+            menus.setOrder(2);
+        }
+        if ("商品管理".equals(per.getPs_name())) {
+            menus.setOrder(3);
+        }
+        if ("订单管理".equals(per.getPs_name())) {
+            menus.setOrder(4);
+        }
+        if ("数据统计".equals(per.getPs_name())) {
+            menus.setOrder(5);
+        }
+        if ("商品列表".equals(per.getPs_name())) {
+            menus.setOrder(1);
+        }
+        if ("分类参数".equals(per.getPs_name())) {
+            menus.setOrder(2);
+        }
+        if ("商品分类".equals(per.getPs_name())) {
+            menus.setOrder(3);
+        }
         return menus;
     }
 }
