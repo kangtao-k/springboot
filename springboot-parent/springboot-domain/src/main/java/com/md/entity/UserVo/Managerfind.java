@@ -15,7 +15,7 @@ public class Managerfind implements Serializable {
     private String email;           //邮箱
     private String mobile;          //手机号
     private Integer type;           //状态   1
-    private String create_time;     //创建时间
+    private Integer create_time;     //创建时间
     private boolean mg_state;       //状态 1为true 0为false
     private String role_name;       //角色名
 }

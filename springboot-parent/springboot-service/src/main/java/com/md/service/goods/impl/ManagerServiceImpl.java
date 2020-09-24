@@ -65,10 +65,9 @@ public class ManagerServiceImpl implements ManagerService {
         add.setId(manager.getMg_id());
         add.setUsername(manager.getMg_name());
         add.setMobile(manager.getMg_mobile());
-        add.setType(manager.getMg_state());
-        add.setOpenid("");
         add.setEmail(manager.getMg_email());
-        add.setCreate_time(DateUtils.getDate(manager.getMg_time()));
+        add.setCreate_time(manager.getMg_time());
+        add.setRole_id(-1);
         return add;
     }
 
@@ -123,7 +122,8 @@ public class ManagerServiceImpl implements ManagerService {
         Managerfind find = new Managerfind();
         //查出所有数据
         List<Manager> managers = managerDao.findAllManager(a,pagesize);
-        int size = managers.size();
+        int size = managerDao.mannum();
+
         List<Managerfind> lists = new ArrayList<>();
         for (Manager manager : managers) {
             find = new Managerfind();
@@ -132,7 +132,7 @@ public class ManagerServiceImpl implements ManagerService {
             find.setMobile(manager.getMg_mobile());
             find.setType(manager.getMg_state());
             find.setEmail(manager.getMg_email());
-            find.setCreate_time(DateUtils.getDate(manager.getMg_time()));
+            find.setCreate_time(manager.getMg_time());
             find.setRole_name(roleDao.NameById(manager.getRole_id()));
             if (manager.getMg_state() == 1) {
                 find.setMg_state(true);
@@ -143,7 +143,7 @@ public class ManagerServiceImpl implements ManagerService {
         }
         pobj.setUsers(lists);
         pobj.setTotal(size);
-        pobj.setPageNum(pagenum);
+        pobj.setPagenum(pagenum);
         return pobj;
     }
 
@@ -151,7 +151,7 @@ public class ManagerServiceImpl implements ManagerService {
     public PageObj pagelistquery(String query, Integer pagenum, Integer pagesize) throws Exception {
         int a = pagesize*(pagenum-1);
         List<Manager> managers = managerDao.findByLikeName(query,a,pagesize);
-        int size = managers.size();
+        int size =  managerDao.manfindByName(query);
         Managerfind find = new Managerfind();
         List<Managerfind> lists = new ArrayList<>();
         for (Manager manager : managers) {
@@ -161,7 +161,7 @@ public class ManagerServiceImpl implements ManagerService {
             find.setMobile(manager.getMg_mobile());
             find.setType(manager.getMg_state());
             find.setEmail(manager.getMg_email());
-            find.setCreate_time(DateUtils.getDate(manager.getMg_time()));
+            find.setCreate_time(manager.getMg_time());
             find.setRole_name(roleDao.NameById(manager.getRole_id()));
             if (manager.getMg_state() == 1) {
                 find.setMg_state(true);
@@ -171,7 +171,7 @@ public class ManagerServiceImpl implements ManagerService {
             lists.add(find);
         }
         pobj.setUsers(lists);
-        pobj.setPageNum(pagenum);
+        pobj.setPagenum(pagenum);
         pobj.setTotal(size);
         return pobj;
     }

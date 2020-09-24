@@ -27,32 +27,28 @@ public class ManagerController {
 
     //登录
     @PostMapping(value = "/login")
-    public Result loginManager(@RequestBody(required = false) Map<String,String> map) throws Exception {
+    public Result loginManager(@RequestBody(required = false) Map<String, String> map) throws Exception {
         String username = map.get("username");
         String password = map.get("password");
-        if (username == null || password == null) {
-            System.out.println(username+"---"+password);
-        }else {
-            ManagerLogin login = managerService.loginManager(username, MD5.getMD5(password));
-            if (login.getId() != null) {
-                //登陆成功
-                //其他数据以map集合存放在token中
-                Map<String, Object> dataMap = new HashMap<>();
-                dataMap.put("loginId", login.getId());
-                dataMap.put("loginName", login.getUsername());
-                String loginId = Integer.toString(login.getId());
-                //生成token并存入数据返回
-                String token = jwtUtils.createJwt(loginId, login.getUsername(), dataMap);
-                StringBuffer sb = new StringBuffer();
-                String pre = "Bearer ";
-                StringBuffer sb2 = sb.append(pre);
-                StringBuffer tokens = sb2.append(token);
-                login.setToken(tokens.toString());
-                result = Result.succ("登陆成功", login);
-            } else if (login.getId() == null) {
-                //登陆失败
-                result = Result.failed("用户名或密码错误");
-            }
+        ManagerLogin login = managerService.loginManager(username, MD5.getMD5(password));
+        if (login.getId() != null) {
+            //登陆成功
+            //其他数据以map集合存放在token中
+            Map<String, Object> dataMap = new HashMap<>();
+            dataMap.put("loginId", login.getId());
+            dataMap.put("loginName", login.getUsername());
+            String loginId = Integer.toString(login.getId());
+            //生成token并存入数据返回
+            String token = jwtUtils.createJwt(loginId, login.getUsername(), dataMap);
+            StringBuffer sb = new StringBuffer();
+            String pre = "Bearer ";
+            StringBuffer sb2 = sb.append(pre);
+            StringBuffer tokens = sb2.append(token);
+            login.setToken(tokens.toString());
+            result = Result.succ("登陆成功", login);
+        } else if (login.getId() == null) {
+            //登陆失败
+            result = Result.failed("用户名或密码错误");
         }
         return result;
     }

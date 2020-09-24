@@ -7,7 +7,7 @@ public class PageObj<T> implements Serializable {
 
     private List<T> users;
     private Integer total;          //总记录数
-    private Integer pageNum;            //当前页码
+    private Integer pagenum;            //当前页码
 
     public List<T> getUsers() {
         return users;
@@ -25,11 +25,11 @@ public class PageObj<T> implements Serializable {
         this.total = total;
     }
 
-    public Integer getPageNum() {
-        return pageNum;
+    public Integer getPagenum() {
+        return pagenum;
     }
 
-    public void setPageNum(Integer pageNum) {
-        this.pageNum = pageNum;
+    public void setPagenum(Integer pagenum) {
+        this.pagenum = pagenum;
     }
 }

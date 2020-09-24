@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -33,73 +32,23 @@ public class RoleServiceImpl implements RoleService {
     public List<RolePerInfo> roleListPer() throws Exception {
         //查询出所有的角色
         List<Role> roles = roleDao.findRole();
-
-        List<RolePerInfo> rolelisi = new ArrayList<>();
-        //获取每个角色所有的权限
-        List<Integer> psIds = null;
+        List<RolePerInfo> rolelist = new ArrayList<>();
         //封装类：
         RolePerInfo rolePerInfo = null;     //角色权限
-        OnePerInfo menus =new OnePerInfo();              //一级权限
-        TwoPerInfo two = new TwoPerInfo();              //二级权限
-        ThreePerInfo three = new ThreePerInfo();          //三级权限
-        List<OnePerInfo> onelist = null;
-        List<TwoPerInfo> twolist = null;
-        List<ThreePerInfo> threelist = null;
         for (Role role : roles) {
             rolePerInfo = new RolePerInfo();
-            onelist = new ArrayList<>();
-            twolist = new ArrayList<>();
-            threelist = new ArrayList<>();
-
-
-
-
-
-            String ps_ids = role.getPs_ids();
-            rolePerInfo.setId(role.getRole_id());
-            rolePerInfo.setRoleName(role.getRole_name());
-            rolePerInfo.setRoleDesc(role.getRole_desc());
-            if (ps_ids.length() != 0) {
+            String pids = role.getPs_ids();
+            //如果有权限id
+            if (pids.length() != 0) {
                 //得到每个id所对应的权限等级
-                List<Permission> pers = permissionDao.findByIds(ps_ids);
-                for (Permission per : pers) {
-                    if (per.getPs_level().equals("0")) {
-                        menus = new OnePerInfo();
-                        //1级权限
-                        menus.setId(per.getPs_id());
-                        menus.setAuthName(per.getPs_name());
-                        String path = apiDao.pathById(per.getPs_id());
-                        menus.setPath(path);
-                        onelist.add(menus);
+                rolePerInfo = RoleServiceImpl.fengzhuang(role,pids, permissionDao, apiDao);
 
-                    } else if (per.getPs_level().equals("1")) {
-                        two = new TwoPerInfo();
-                        //2级权限
-                        two.setId(per.getPs_id());
-                        two.setAuthName(per.getPs_name());
-                        String path = apiDao.pathById(per.getPs_id());
-                        two.setPath(path);
-                        twolist.add(two);
-
-                    } else if (per.getPs_level().equals("2")) {
-                        three = new ThreePerInfo();
-                        //3级权限
-                        three.setId(per.getPs_id());
-                        three.setAuthName(per.getPs_name());
-                        String path = apiDao.pathById(per.getPs_id());
-                        three.setPath(path);
-                        threelist.add(three);
-                    }
-                    menus.setChildren(twolist);
-                    two.setChildren(threelist);
-                }
-                rolePerInfo.setChildren(onelist);
-                rolelisi.add(rolePerInfo);
+                rolelist.add(rolePerInfo);
             } else {
-                rolelisi.add(rolePerInfo);
+                rolelist.add(rolePerInfo);
             }
         }
-        return rolelisi;
+        return rolelist;
     }
 
     @Override
@@ -289,5 +238,81 @@ public class RoleServiceImpl implements RoleService {
             }
         }
         return ids;
+    }
+
+    public static RolePerInfo fengzhuang(Role role,String pids,IPermissionDao permissionDao,IPer_apiDao apiDao) throws Exception {
+        Map<Integer,OnePerInfo> mapone = new HashMap<>();   //放1级权限
+        Map<String,TwoPerInfo> maptwo = new HashMap<>();  //2级
+        Map<String,ThreePerInfo> mapthree = new HashMap<>();  //3级
+        //找出该角色对应的所有权限并放进集合中
+        OnePerInfo one = new OnePerInfo();
+        TwoPerInfo two = new TwoPerInfo();
+        ThreePerInfo three = new ThreePerInfo();
+        List<Permission> pers = permissionDao.findByIds(pids);
+        for (Permission per : pers) {
+            //将每个权限放进对应的集合
+            if(per.getPs_level().equals("0")){
+                one.setId(per.getPs_id());
+                one.setAuthName(per.getPs_name());
+                one.setPath(apiDao.pathById(per.getPs_id()));
+                mapone.put(one.getId(),one);
+            }
+            if(per.getPs_level().equals("0")){
+                two.setId(per.getPs_id());
+                two.setAuthName(per.getPs_name());
+                two.setPath(apiDao.pathById(per.getPs_id()));
+                String id = RoleServiceImpl.idtopid(per.getPs_id(), per.getPs_pid());
+                maptwo.put(id,two);
+            }
+            if(per.getPs_level().equals("0")){
+                three.setId(per.getPs_id());
+                three.setAuthName(per.getPs_name());
+                three.setPath(apiDao.pathById(per.getPs_id()));
+                String id = RoleServiceImpl.idtopid(per.getPs_id(), per.getPs_pid());
+                mapthree.put(id,three);
+            }
+        }
+        //将所有三级放进对应的2级
+        Set<String> twoset = maptwo.keySet();
+        Set<String> thset = mapthree.keySet();
+        for (String ts : twoset) {
+            for (String hs : thset) {
+                if(ts.endsWith(hs.substring(0,3))){
+                    //id和pid相同,将3级放进2级
+                    maptwo.get(ts).getChildren().add(mapthree.get(hs));
+                }
+            }
+        }
+        //将所有二级放进对应的一级
+        Set<String> twosets = maptwo.keySet();
+        Set<Integer> oneset = mapone.keySet();
+        for (Integer os : oneset) {
+            for (String ts : twosets) {
+                if(ts.endsWith(os+"")){
+                    //将二级放进一级
+                    mapone.get(os).getChildren().add(maptwo.get(ts));
+                }
+            }
+        }
+        Set<Integer> oneper = mapone.keySet();
+        RolePerInfo rolePerInfo = new RolePerInfo();
+        for (Integer integer : oneper) {
+            one = mapone.get(integer);
+            rolePerInfo.setId(role.getRole_id());
+            rolePerInfo.setRoleName(role.getRole_name());
+            rolePerInfo.setRoleDesc(role.getRole_desc());
+            rolePerInfo.getChildren().add(one);
+        }
+        return rolePerInfo;
+    }
+    public static String idtopid(int id,int pid){
+        return id+","+pid;
+    }
+
+    public static void main(String[] args) {
+        String a= "123,345";
+        int b=345;
+        boolean b1 = a.endsWith(b + "");
+        System.out.println(b1);
     }
 }
