@@ -22,32 +22,19 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryDao categoryDao;
 
     @Override
-    public List<ChildrenCats> findAllCats() throws Exception{
-        List<ChildrenCats> catsParent = categoryDao.findFirstCats();// 查出最顶层的分类
-        List<ChildrenCats> catsTwo = categoryDao.findSecondCats();// 查出第二层的分类
-        List<ChildrenCats> catsThree = categoryDao.findThirdCats();// 查出第三层的分类
-
-        List<ChildrenCats> cateListThree = new ArrayList<ChildrenCats>();// 放置三级分类
-        List<ChildrenCats> cateListTwo = new ArrayList<ChildrenCats>();// 放置二级分类
-
-//        将三级分类放入二级分类下
-        for (ChildrenCats parentCats : catsTwo) {
-            for (ChildrenCats childrenCats : catsThree) {
-                if (parentCats.getCat_id().equals(childrenCats.getCat_pid())) {
-                    cateListThree.add(childrenCats);
-                }
-            }
-            parentCats.setChildren(cateListThree);
-        }
-//        将二级分类放入顶级分类下
+    public List<ChildrenCats> findAllCats(Integer type, Integer pagenum, Integer pagesize) throws Exception {
+        int i = pagesize * (pagenum - 1);// 从哪儿开始查
+        List<ChildrenCats> catsParent = categoryDao.findFirstCats(i,pagesize);// 查出最顶层的分类
+//      分层嵌套
         for (ChildrenCats parentCats : catsParent) {
+            List<ChildrenCats> catsTwo = categoryDao.findCats(1, parentCats.getCat_id());// 查出第二层的分类
+            parentCats.setChildren(catsTwo);
             for (ChildrenCats childrenCats : catsTwo) {
-                if (parentCats.getCat_id().equals(childrenCats.getCat_pid())) {
-                    cateListTwo.add(childrenCats);
-                }
+                List<ChildrenCats> catsThree = categoryDao.findCats(2, childrenCats.getCat_id());// 查出第三层的分类
+                childrenCats.setChildren(catsThree);
             }
-            parentCats.setChildren(cateListTwo);
         }
+
         return catsParent;
     }
 
@@ -109,5 +96,11 @@ public class CategoryServiceImpl implements CategoryService {
         categoryDao.editCatAttrById(attribute);
         Attribute attr = categoryDao.findCatAttrById(attribute.getAttr_id());
         return attr;
+    }
+
+    @Override
+    public Integer findTotalCats() throws Exception {
+        Integer total = categoryDao.findTotalCats();
+        return total;
     }
 }

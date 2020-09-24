@@ -1,5 +1,6 @@
 package com.md.controller;
 
+import com.md.entity.goodsVo.CategoryPageResult;
 import com.md.entity.other.Meta;
 import com.md.entity.goodsVo.Result;
 import com.md.pojo.goods.Attribute;
@@ -24,9 +25,12 @@ public class CategoriesApplication {
      * @throws Exception
      */
     @GetMapping("/categories")
-    public Result findAllCats() throws Exception{
-        List<ChildrenCats> allCats = categoryService.findAllCats();
-        Result result = Result.succ(meta, allCats);
+    public Result findAllCats(@RequestParam Integer type,@RequestParam Integer pagenum,
+                              @RequestParam Integer pagesize) throws Exception{
+        List<ChildrenCats> allCats = categoryService.findAllCats(type,pagenum,pagesize);
+        Integer total = categoryService.findTotalCats();
+        CategoryPageResult pageResult = CategoryPageResult.succ(total, pagenum - 1, pagesize, allCats);
+        Result result = Result.succ(meta, pageResult);
         return result;
     }
 

@@ -7,7 +7,7 @@ import com.md.pojo.goods.ChildrenCats;
 import java.util.List;
 
 public interface CategoryService {
-    List<ChildrenCats> findAllCats() throws Exception;
+    List<ChildrenCats> findAllCats(Integer type,Integer pagenum,Integer pagesize) throws Exception;
 
     Category addCategories(Integer cat_pid, String cat_name, Integer cat_level) throws Exception;
 
@@ -26,4 +26,6 @@ public interface CategoryService {
     Attribute findCatAttrById(Integer attrId) throws Exception;
 
     Attribute editCatAttrById(Attribute attribute) throws Exception;
+
+    Integer findTotalCats() throws Exception;
 }
