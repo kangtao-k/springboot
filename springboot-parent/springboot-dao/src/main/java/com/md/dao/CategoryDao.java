@@ -5,9 +5,7 @@ import com.md.pojo.goods.Category;
 import com.md.pojo.goods.ChildrenCats;
 import org.apache.ibatis.annotations.*;
 
-import javax.persistence.MapKey;
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface CategoryDao {
