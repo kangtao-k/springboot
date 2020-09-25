@@ -164,7 +164,7 @@ public class SpGoodsApplication {
         File dest = new File(fileUrl);
         try {
             file.transferTo(dest);
-            String picsUrl = "http://127.0.0.1:8888/" + fileUrl;
+            String picsUrl = "http://www.kangkangwt.cn:8088/" + fileUrl;
             goodsService.savePics(picsUrl);
             Map<String, String> map = new HashMap<String, String>();
             map.put("tmp_path", fileUrl);
