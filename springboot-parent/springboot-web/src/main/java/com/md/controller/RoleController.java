@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class RoleController {
@@ -56,7 +57,9 @@ public class RoleController {
 
     //角色授权
     @PostMapping("/roles/{roleId}/rights")
-    public Result modifyRights(@PathVariable(required = true) Integer roleId, String rids) throws Exception{
+    public Result modifyRights(@PathVariable(required = true) Integer roleId,
+                               @RequestBody Map<String,String> map) throws Exception{
+        String rids = map.get("rids");
         String msg = roleService.modifyRights(roleId,rids);
         return Result.succ(msg,null);
     }

@@ -14,4 +14,7 @@ public interface OrdersService {
     Orders findOrdersById(Integer id) throws Exception;
 
     List<Express> findExpressById(Integer id) throws Exception;
+
+    Integer findTotalOrders() throws Exception;
+
 }

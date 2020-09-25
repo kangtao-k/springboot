@@ -28,4 +28,8 @@ public interface OrdersDao {
 
     @Select("select * from sp_express where order_id=#{id}")
     List<Express> findExpressById(Integer id);
+
+    @Select("select count(*) from sp_order")
+    Integer findTotalOrders();
+
 }

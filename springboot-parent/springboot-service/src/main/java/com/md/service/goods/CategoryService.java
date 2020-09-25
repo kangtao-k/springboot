@@ -17,15 +17,15 @@ public interface CategoryService {
 
     void deleteCatsById(Integer id) throws Exception;
 
-    List<Attribute> findAllCatAttrById(Integer id) throws Exception;
+    List<Attribute> findAllCatAttrById(Integer id,String sel) throws Exception;
 
-    Attribute addCatAttr(Attribute attribute) throws Exception;
+    Attribute addCatAttr(Integer id,String attr_name,String attr_sel) throws Exception;
 
     void deleteCatAttr(Integer id, Integer attrId) throws Exception;
 
     Attribute findCatAttrById(Integer attrId) throws Exception;
 
-    Attribute editCatAttrById(Attribute attribute) throws Exception;
-
     Integer findTotalCats() throws Exception;
+
+    Attribute editCatAttrById(Integer id, Integer attrId, String attr_name, String attr_sel) throws Exception;
 }

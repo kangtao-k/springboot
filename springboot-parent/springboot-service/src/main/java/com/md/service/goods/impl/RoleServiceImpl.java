@@ -40,7 +40,7 @@ public class RoleServiceImpl implements RoleService {
         for (Role role : roles) {
             rolePerInfo = new RolePerInfo();
             String pids = role.getPs_ids();
-            System.out.println(pids.length() == 0);
+//            System.out.println(pids.length() == 0);
             if (pids.length() != 0) {
                 rolePerInfo = fengzhuang(role, pids, permissionDao, apiDao);
             }
