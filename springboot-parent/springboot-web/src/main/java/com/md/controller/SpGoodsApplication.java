@@ -10,9 +10,11 @@ import com.md.pojo.goods.GoodsAttr;
 import com.md.pojo.goods.GoodsPics;
 import com.md.service.goods.SpGoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -142,13 +144,23 @@ public class SpGoodsApplication {
      * @throws Exception
      */
     @PostMapping(value = "/upload")
-    public Result uploadPics(@RequestParam MultipartFile file) throws Exception {
+    public Result uploadPics(@RequestParam MultipartFile file, HttpServletRequest request) throws Exception {
+
+        //上传文件的位置,默认会在项目根目录找static文件夹,需手动创建,不然找到是临时路径。
+        String path = request.getSession().getServletContext().getRealPath("/tmp_uploads/");
+        //判断该路径是否存在
+        File pFile = new File(path);
+        // 若不存在则创建该文件夹
+        if(!pFile.exists()){
+            pFile.mkdirs();
+        }
+
         if (file.isEmpty()) {
             return Result.failed("上传失败");
         }
         String filename = file.getOriginalFilename();// 获取图片名称
-        String filePath = "tmp_uploads/";// 图片存储路径
-        String fileUrl = filePath + filename;
+        //String filePath = "tmp_uploads\\";// 图片存储路径
+        String fileUrl = path + filename;
         File dest = new File(fileUrl);
         try {
             file.transferTo(dest);
@@ -159,6 +171,7 @@ public class SpGoodsApplication {
             map.put("url", picsUrl);
             return Result.succ(meta, map);
         } catch (IOException e) {
+//            throw new Exception(e);
             return Result.failed("上传失败");
         }
     }

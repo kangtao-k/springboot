@@ -73,8 +73,11 @@ public class ManagerController {
 
     //添加用户
     @PostMapping(value = "/users")
-    public Result addUser(@RequestParam(required = true) String username, @RequestParam(required = true) String password,
-                          String email, String mobile) throws Exception {
+    public Result addUser(@RequestBody Map<String,String> map) throws Exception {
+        String username = map.get("username");
+        String password = map.get("password");
+        String email = map.get("email");
+        String mobile = map.get("mobile");
         boolean flag = managerService.addManager(username, MD5.getMD5(password), email, mobile);
         if (flag) {
             //根据用户名查询用户
@@ -130,7 +133,9 @@ public class ManagerController {
 
     //给用户分配新角色
     @PutMapping(value = "/users/{id}/role")
-    public Result modifyRoleById(@PathVariable(required = true) Integer id, Integer rid) throws Exception {
+    public Result modifyRoleById(@PathVariable(required = true) Integer id,
+                                 @RequestBody Map<String,Integer> map) throws Exception {
+        Integer rid = map.get("rid");
         //根据用户id改变角色id
         ManagerLogin manager = managerService.modifyRoleById(id, rid);
         return Result.succ("设置角色成功", manager);
