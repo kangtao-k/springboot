@@ -21,5 +21,5 @@ public interface RoleService {
 
     String modifyRights(Integer roleId, String rids) throws Exception;
 
-    List<OnePerInfo> delRightsById(Integer roleId, Integer rightId) throws Exception;
+    List<PerList> delRightsById(Integer roleId, Integer rightId) throws Exception;
 }

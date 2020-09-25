@@ -32,8 +32,12 @@ public interface IPermissionDao {
     Integer PidById(Integer id) throws Exception;
 
     @Select("select * from sp_permission where ps_pid=0")
-    List<Permission> findByPid();
+    List<Permission> findByPid() throws Exception;
 
     @Select("select * from sp_permission where ps_pid <> 0 and ps_level='1'")
-    List<Permission> findByNotPid();
+    List<Permission> findByNotPid() throws Exception;
+
+    @Select("select * from sp_permission where ps_level=#{s} and ps_pid in (#{psIds}) ")
+    List<Permission> RolePerByLevel(String psIds,String s) throws Exception;
+
 }

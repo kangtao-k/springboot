@@ -59,7 +59,6 @@ public class PermissionServiceImpl implements PermissionService {
 
         //找出所有二级权限
         List<Permission> per2 = perDao.findByLevel("1");
-        System.out.println(per2);
         PerTree pertree2 = null;
         List<PerTree> perlist2 = new ArrayList<>();
         //将信息放进封装类中，暂时不放子权限

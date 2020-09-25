@@ -1,6 +1,7 @@
 package com.md.controller;
 
 import com.md.entity.UserVo.OnePerInfo;
+import com.md.entity.UserVo.PerList;
 import com.md.entity.UserVo.RoleAdd;
 import com.md.entity.UserVo.RolePerInfo;
 import com.md.entity.goodsVo.Result;
@@ -63,7 +64,7 @@ public class RoleController {
     //删除角色指定权限
     @DeleteMapping("/roles/{roleId}/rights/{rightId}")
     public Result delRightsById(@PathVariable(required = true) Integer roleId, @PathVariable(required = true) Integer rightId) throws Exception{
-        List<OnePerInfo> onelist = roleService.delRightsById(roleId, rightId);
+        List<PerList> onelist = roleService.delRightsById(roleId, rightId);
         return Result.succ("取消权限成功",onelist);
     }
 }

@@ -105,105 +105,118 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<OnePerInfo> delRightsById(Integer roleId, Integer rightId) throws Exception {
-        //查出角色所有的权限id
-        String ids = roleDao.getIdsById(roleId);
-        //根据要删除的权限id找到指定的权限
-        Permission per = permissionDao.findById(rightId);
-        String level = per.getPs_level();
-        //找出指定权限id下的所有下一级权限
-        List<Integer> perid = permissionDao.IdByPid(rightId);
-        if (level.equals("2")) {
-            //删除权限
-            ids = RoleServiceImpl.delPid3(ids, rightId.toString());
-        } else if (level.equals("1")) {
-            //找出指定删除权限下所有的3级权限
-            ids = RoleServiceImpl.delPid2(perid, ids);
-            //删除传递过来的权限
-            ids = RoleServiceImpl.delPid3(ids, rightId.toString());
-        } else if (level.equals("0")) {
-            //找出指定删除权限下的所有2级权限
-            String[] split = ids.split(",");
-            for (Integer integer : perid) {
-                for (String s : split) {
-                    if (Integer.parseInt(s) == integer) {
-                        //找到2级权限下的所有3级权限并删除
-                        List<Integer> threePer = permissionDao.IdByPid(integer);
-                        //删除每个2级下的三级权限
-                        ids = RoleServiceImpl.delPid2(threePer, ids);
-                        //删除每个2级权限
-                        ids = RoleServiceImpl.delPid3(ids, s);
-
-                    }
-                }
-            }
-            //删除传递过来的权限
-            if (ids.length() != 3) {
-                RoleServiceImpl.delPid3(ids, rightId.toString());
-            } else {
-                ids = "";
-            }
-        }
-        //修改权限
-        roleDao.modifyRights(roleId, ids);
-        List<OnePerInfo> onelist = null;
-        if (ids.length() != 0) {
-            //将现有的所有1,2,3级权限放进指定集合
-            OnePerInfo one = new OnePerInfo();
-            TwoPerInfo two = new TwoPerInfo();
-            ThreePerInfo three = new ThreePerInfo();
-            onelist = new ArrayList<>();
-            List<TwoPerInfo> twolist = new ArrayList<>();
-            List<ThreePerInfo> thrlist = new ArrayList<>();
-            //查出所有的权限信息
-            List<Permission> byIds = permissionDao.findByIds(ids);
-            for (Permission byId : byIds) {
-                if (byId.getPs_level().equals("0")) {
-                    one.setId(byId.getPs_id());
-                    one.setAuthName(byId.getPs_name());
-                    String path = apiDao.pathById(byId.getPs_id());
-                    one.setPath(path);
-                    onelist.add(one);
-                } else if (byId.getPs_level().equals("1")) {
-                    two.setId(byId.getPs_id());
-                    two.setAuthName(byId.getPs_name());
-                    String path = apiDao.pathById(byId.getPs_id());
-                    two.setPath(path);
-                    twolist.add(two);
-                } else if (byId.getPs_level().equals("2")) {
-                    three.setId(byId.getPs_id());
-                    three.setAuthName(byId.getPs_name());
-                    String path = apiDao.pathById(byId.getPs_id());
-                    three.setPath(path);
-                    thrlist.add(three);
-                }
-            }
-            if (onelist.size() != 0) {
-                for (OnePerInfo olist : onelist) {
-                    if (twolist.size() != 0) {
-                        for (TwoPerInfo tlist : twolist) {
-                            //根据id查出pid
-                            Integer tpid = permissionDao.PidById(tlist.getId());
-                            if (olist.getId() == tpid) {
-                                olist.getChildren().add(tlist);
-                            }
-                            if (thrlist.size() != 0) {
-                                for (ThreePerInfo thlist : thrlist) {
-                                    Integer thpid = permissionDao.PidById(thlist.getId());
-                                    if (tlist.getId() == thpid) {
-                                        tlist.getChildren().add(thlist);
-                                    }
-                                }
-                            }
-
+    public List<PerList> delRightsById(Integer roleId, Integer rightId) throws Exception {
+       /* String ids = roleDao.getIdsById(roleId);
+        List<PerList> onelist = null;
+        if(ids.length() != 0) {
+            //查出角色所有的二三级权限
+            List<Permission> per1 = permissionDao.RolePerByLevel( ids,"1");
+            List<Permission> per2 = permissionDao.RolePerByLevel( ids,"2");
+            //创建要删除的权限id的集合
+            List<Integer> delids = new ArrayList<>();
+            delids.add(rightId);
+            for (Permission permission : per1) {
+                if (permission.getPs_pid() == rightId) {
+                    Integer delid = permission.getPs_id();
+                    delids.add(delid);
+                    for (Permission permission1 : per2) {
+                        if (permission1.getPs_pid() == delid) {
+                            delids.add(permission1.getPs_id());
                         }
                     }
+                }
+            }
+            List<String> strings = Arrays.asList(ids.split(","));
+            strings.removeAll(delids);
+            Iterator<String> iterator = strings.iterator();
+            if (iterator.hasNext()) {
+                ids = iterator + ",";
+            }*/
+        //查出角色所有的权限id
+        String ids = roleDao.getIdsById(roleId);
+        List<PerList> onelist = null;
+        if (ids.length() != 0) {
+            //根据要删除的权限id找到指定的权限
+            Permission per = permissionDao.findById(rightId);
+            String level = per.getPs_level();
+            //找出指定权限id下的所有下一级权限
+            List<Integer> perid = permissionDao.IdByPid(rightId);
+            if (level.equals("2")) {
+                //删除权限
+                ids = RoleServiceImpl.delPid3(ids, rightId.toString());
+            } else if (level.equals("1")) {
+                //找出指定删除权限下所有的3级权限
+                ids = RoleServiceImpl.delPid2(perid, ids);
+                //删除传递过来的权限
+                ids = RoleServiceImpl.delPid3(ids, rightId.toString());
+            } else if (level.equals("0")) {
+                //找出指定删除权限下的所有2级权限
+                String[] split = ids.split(",");
+                for (Integer integer : perid) {
+                    for (String s : split) {
+                        if (Integer.parseInt(s) == integer) {
+                            //找到2级权限下的所有3级权限并删除
+                            List<Integer> threePer = permissionDao.IdByPid(integer);
+                            //删除每个2级下的三级权限
+                            ids = RoleServiceImpl.delPid2(threePer, ids);
+                            //删除每个2级权限
+                            ids = RoleServiceImpl.delPid3(ids, s);
+                        }
+                    }
+                }
+                //删除传递过来的权限
+                if (ids.length() != 3) {
+                    RoleServiceImpl.delPid3(ids, rightId.toString());
+                } else {
+                    ids = "";
+                }
+            }
+            //修改权限
+            roleDao.modifyRights(roleId, ids);
 
+            List<PerList> twolist = null;
+            List<PerList> thrlist = null;
+            if (ids.length() != 0) {
+                //将现有的所有1,2,3级权限放进指定集合
+                onelist = new ArrayList<>();
+                twolist = new ArrayList<>();
+                thrlist = new ArrayList<>();
+                //查出所有的权限信息
+                List<Permission> byIds = permissionDao.findByIds(ids);
+                for (Permission byId : byIds) {
+                    if (byId.getPs_level().equals("0")) {
+                        onelist.add(roletolist(byId, apiDao));
+                    } else if (byId.getPs_level().equals("1")) {
+                        twolist.add(roletolist(byId, apiDao));
+                    } else if (byId.getPs_level().equals("2")) {
+                        thrlist.add(roletolist(byId, apiDao));
+                    }
+                }
+                if (onelist.size() != 0) {
+                    for (PerList olist : onelist) {
+                        if (twolist.size() != 0) {
+                            for (PerList tlist : twolist) {
+                                //根据id查出pid
+                                Integer tpid = permissionDao.PidById(tlist.getId());
+                                if (olist.getId() == tpid) {
+                                    olist.getChildren().add(tlist);
+                                }
+                                if (thrlist.size() != 0) {
+                                    for (PerList thlist : thrlist) {
+                                        Integer thpid = permissionDao.PidById(thlist.getId());
+                                        if (tlist.getId() == thpid) {
+                                            tlist.getChildren().add(thlist);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
         }
         return onelist;
-
     }
 
     //将role放进add
@@ -283,7 +296,6 @@ public class RoleServiceImpl implements RoleService {
         for (Integer os : oneset) {
             for (String ts : twosets) {
                 if (ts.endsWith(os + "")) {
-                    System.out.println(os + ts + "二放三");
                     //将二级放进一级
                     mapone.get(os).getChildren().add(maptwo.get(ts));
                 }
@@ -303,7 +315,7 @@ public class RoleServiceImpl implements RoleService {
         return id + "," + pid;
     }
 
-    //将per对象放入roleperlist中
+    //将per对象放入perList中
     public static PerList roletolist(Permission per, IPer_apiDao per_apiDao) throws Exception {
         PerList perList = new PerList();
         perList.setId(per.getPs_id());
