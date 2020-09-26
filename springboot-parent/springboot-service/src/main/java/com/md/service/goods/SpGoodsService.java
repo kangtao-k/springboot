@@ -38,4 +38,6 @@ public interface SpGoodsService {
     void savePics(String picsUrl) throws Exception;
 
     Long findGoodsNum() throws Exception;
+
+    List<Goods> findByName(String query, String pagenum, Integer pagesize) throws Exception;
 }

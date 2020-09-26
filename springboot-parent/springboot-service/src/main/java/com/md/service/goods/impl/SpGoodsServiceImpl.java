@@ -138,4 +138,12 @@ public class SpGoodsServiceImpl implements SpGoodsService {
         return goodsDao.findGoodsNum();
     }
 
+    @Override
+    public List<Goods> findByName(String query, String pagenum, Integer pagesize) throws Exception {
+        //计算开始查询的位置
+        int a = pagesize*(Integer.parseInt(pagenum) -1);
+        List<Goods> goods = goodsDao.findByLiskeName(query,a,pagesize);
+        return goods;
+    }
+
 }

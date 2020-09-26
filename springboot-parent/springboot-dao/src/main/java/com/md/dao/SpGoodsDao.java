@@ -73,4 +73,7 @@ public interface SpGoodsDao {
     @Insert("insert into sp_goods_attr values(null,#{goodsId},#{attr_id},#{attr_value},0.00)")
     void addGoodsAttrByGoodsId(@Param("attr_id") Integer attr_id,@Param("attr_value") String attr_value,
                                @Param("goodsId") Integer goodsId);
+
+    @Select("select * from sp_goods where goods_name like '%${query}%' limit #{a},#{pagesize}")
+    List<Goods> findByLiskeName(@Param("query") String query, @Param("pagesize") Integer pagesize,@Param("a") Integer a) throws Exception;
 }
