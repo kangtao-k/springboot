@@ -35,12 +35,22 @@ public class SpGoodsApplication {
      */
     @GetMapping(value = "/goods")
     public Result findAllGoods(@RequestParam String pagenum,
-                               @RequestParam Integer pagesize) throws Exception {
-        Long total = goodsService.findGoodsNum();
-        Integer num = Integer.parseInt(pagenum);
-        List<Goods> skus = goodsService.findAll(num, pagesize);// 分页查询全部产品
-        PageResult result = PageResult.succ(total, pagenum, skus);// 返回当前页码和总页数
-        Result r = Result.succ(meta, result);// 封装
+                               @RequestParam Integer pagesize, @RequestParam(required = false) String query) throws Exception {
+        List<Goods> skus ;
+        PageResult result ;
+        Result r ;
+        if (query == null) {
+            Long total = goodsService.findGoodsNum();
+            Integer num = Integer.parseInt(pagenum);
+            skus = goodsService.findAll(num, pagesize);// 分页查询全部产品
+            result = PageResult.succ(total, pagenum, skus);// 返回当前页码和总页数
+            r = Result.succ(meta, result);// 封装
+        } else {
+            //参数查询
+            skus = goodsService.findByName(query, pagenum, pagesize);
+            result = PageResult.succ((long) skus.size(), pagenum, skus);
+            r = Result.succ(meta,result);
+        }
         return r;
     }
 
@@ -62,7 +72,7 @@ public class SpGoodsApplication {
         List<Attrs> goodsAttrs = goodsService.findGoodsAttr(goods_id);
         findGoods.setPics(goodsPics);
         findGoods.setAttrs(goodsAttrs);
-        Meta.succ(201,"创建商品成功");
+        Meta.succ(201, "创建商品成功");
         Result r = Result.succ(meta, findGoods);
         return r;
     }
@@ -123,6 +133,7 @@ public class SpGoodsApplication {
 
     /**
      * 删除商品
+     *
      * @param id
      * @return
      * @throws Exception
@@ -149,7 +160,7 @@ public class SpGoodsApplication {
         //判断该路径是否存在
         File pFile = new File(path);
         // 若不存在则创建该文件夹
-        if(!pFile.exists()){
+        if (!pFile.exists()) {
             pFile.mkdirs();
         }
 
