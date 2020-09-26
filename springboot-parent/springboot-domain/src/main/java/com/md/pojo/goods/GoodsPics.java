@@ -16,5 +16,9 @@ public class GoodsPics implements Serializable {
     private String pics_big;// 相册大图800*800
     private String pics_mid;// 相册中图350*350
     private String pics_sma;// 相册小图50*50
+
+    private String pics_big_url;// 相册大图800*800
+    private String pics_mid_url;// 相册中图350*350
+    private String pics_sma_url;// 相册小图50*50
 }
 

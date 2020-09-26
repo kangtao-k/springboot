@@ -2,6 +2,7 @@ package com.md.dao;
 
 import com.md.pojo.Statistics.Report;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -19,5 +20,5 @@ public interface ReportDao {
     List<String> findAllDate();
 
     @Select("select rp1_user_count from sp_report_1 where rp1_area=#{name}")
-    List<Integer> findReportByName(String name);
+    List<Integer> findReportByName(@Param("name") String name);
 }

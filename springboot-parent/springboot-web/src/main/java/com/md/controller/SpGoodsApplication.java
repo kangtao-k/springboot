@@ -60,12 +60,10 @@ public class SpGoodsApplication {
         List<GoodsPics> goodsPics = goodsService.findGoodsPics(goods_id);
 //        根据商品id查询商品图片
         List<Attrs> goodsAttrs = goodsService.findGoodsAttr(goods_id);
-        Long total = goodsService.findGoodsNum();
         findGoods.setPics(goodsPics);
         findGoods.setAttrs(goodsAttrs);
-        List<Goods> list = new ArrayList<>();
-        PageResult result = PageResult.succ(total, "1", list);
-        Result r = Result.succ(meta, result);
+        Meta.succ(201,"创建商品成功");
+        Result r = Result.succ(meta, findGoods);
         return r;
     }
 
@@ -89,7 +87,7 @@ public class SpGoodsApplication {
      * @return
      * @throws Exception
      */
-    @PutMapping(value = "/goods/{id}")
+    /*@PutMapping(value = "/goods/{id}")
     public Result editGoodsById(@PathVariable Integer id, @RequestBody AddGoods goods) throws Exception {
 //        编辑商品
         goods.setGoods_id(id);
@@ -121,7 +119,7 @@ public class SpGoodsApplication {
 //        返回商品查询
         Result r = findByIdGoods(id);
         return r;
-    }
+    }*/
 
     /**
      * 删除商品

@@ -3,8 +3,10 @@ package com.md.pojo.goods;
 import lombok.Data;
 
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 
+@Table(name = "sp_attribute")
 @Data
 public class Attribute implements Serializable {
 
