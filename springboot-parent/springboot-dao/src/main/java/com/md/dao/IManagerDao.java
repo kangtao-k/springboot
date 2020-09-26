@@ -44,8 +44,8 @@ public interface IManagerDao {
     List<Manager> findByLikeName(@Param("query") String query, @Param("a") Integer a, @Param("p") Integer p);
 
     @Select("select count(*) from sp_manager")
-    int mannum() throws Exception;
+    Integer mannum() throws Exception;
 
     @Select("select count(*) from sp_manager where mg_name like '%${_parameter}%' ")
-    int manfindByName(@Param("query") String query) throws Exception;
+    Integer manfindByName(@Param("query") String query) throws Exception;
 }

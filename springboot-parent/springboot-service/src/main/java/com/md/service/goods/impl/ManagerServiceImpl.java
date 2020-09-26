@@ -121,8 +121,8 @@ public class ManagerServiceImpl implements ManagerService {
         int a = pagesize * (pagenum - 1);// 计算出开始查询的位置
         Managerfind find = new Managerfind();
         //查出所有数据
-        List<Manager> managers = managerDao.findAllManager(a,pagesize);
-        int size = managerDao.mannum();
+        List<Manager> managers = managerDao.findAllManager(a, pagesize);
+        Integer total = managerDao.mannum();
 
         List<Managerfind> lists = new ArrayList<>();
         for (Manager manager : managers) {
@@ -142,16 +142,16 @@ public class ManagerServiceImpl implements ManagerService {
             lists.add(find);
         }
         pobj.setUsers(lists);
-        pobj.setTotal(size);
+        pobj.setTotal(total);
         pobj.setPagenum(pagenum);
         return pobj;
     }
 
     @Override
     public PageObj pagelistquery(String query, Integer pagenum, Integer pagesize) throws Exception {
-        int a = pagesize*(pagenum-1);
-        List<Manager> managers = managerDao.findByLikeName(query,a,pagesize);
-        int size =  managerDao.manfindByName(query);
+        int a = pagesize * (pagenum - 1);
+        List<Manager> managers = managerDao.findByLikeName(query, a, pagesize);
+        Integer total = managerDao.manfindByName(query);
         Managerfind find = new Managerfind();
         List<Managerfind> lists = new ArrayList<>();
         for (Manager manager : managers) {
@@ -172,7 +172,7 @@ public class ManagerServiceImpl implements ManagerService {
         }
         pobj.setUsers(lists);
         pobj.setPagenum(pagenum);
-        pobj.setTotal(size);
+        pobj.setTotal(total);
         return pobj;
     }
 

@@ -56,7 +56,7 @@ public class ManagerController {
 
     //查询所有用户
     @GetMapping(value = "/users")
-    public Result findUser(String query, @RequestParam(required = true) Integer pagenum,
+    public Result findUser(@RequestParam(required = false) String query, @RequestParam(required = true) Integer pagenum,
                            @RequestParam(required = true) Integer pagesize) throws Exception {
         PageObj obj = null;
         if (query == null) {//参数为空
