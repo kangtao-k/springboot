@@ -5,6 +5,7 @@ import com.md.entity.other.Attrs;
 import com.md.pojo.goods.Goods;
 import com.md.pojo.goods.GoodsAttr;
 import com.md.pojo.goods.GoodsPics;
+import com.md.pojo.goods.Goods_2;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -75,5 +76,8 @@ public interface SpGoodsDao {
                                @Param("goodsId") Integer goodsId);
 
     @Select("select * from sp_goods where goods_name like '%${query}%' limit #{a},#{pagesize}")
-    List<Goods> findByLiskeName(@Param("query") String query, @Param("pagesize") Integer pagesize,@Param("a") Integer a) throws Exception;
+    List<Goods> findByLiskeName(@Param("query") String query, @Param("pagesize") Integer pagesize, @Param("a") Integer a) throws Exception;
+
+    @Select("select * from sp_goods where goods_name like '%南极%' limit 1,10")
+    List<Goods> find();
 }

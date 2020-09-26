@@ -1,6 +1,7 @@
 package com.md.entity.goodsVo;
 
 import com.md.pojo.goods.Goods;
+import com.md.pojo.goods.Goods_2;
 import lombok.Data;
 
 import java.io.Serializable;

@@ -5,6 +5,7 @@ import com.md.entity.other.Attrs;
 import com.md.pojo.goods.Goods;
 import com.md.pojo.goods.GoodsAttr;
 import com.md.pojo.goods.GoodsPics;
+import com.md.pojo.goods.Goods_2;
 
 import java.util.List;
 

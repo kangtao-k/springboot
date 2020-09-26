@@ -1,7 +1,6 @@
 package com.md.service.goods;
 
 
-import com.md.entity.UserVo.OnePerInfo;
 import com.md.entity.UserVo.PerList;
 import com.md.entity.UserVo.RoleAdd;
 import com.md.entity.UserVo.RolePerInfo;
@@ -22,4 +21,5 @@ public interface RoleService {
     String modifyRights(Integer roleId, String rids) throws Exception;
 
     List<PerList> delRightsById(Integer roleId, Integer rightId) throws Exception;
+
 }

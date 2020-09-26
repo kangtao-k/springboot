@@ -1,6 +1,5 @@
 package com.md.controller;
 
-import com.md.entity.UserVo.OnePerInfo;
 import com.md.entity.UserVo.PerList;
 import com.md.entity.UserVo.RoleAdd;
 import com.md.entity.UserVo.RolePerInfo;

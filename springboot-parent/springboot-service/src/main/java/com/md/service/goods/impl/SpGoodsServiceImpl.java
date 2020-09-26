@@ -7,6 +7,7 @@ import com.md.entity.other.Attrs;
 import com.md.pojo.goods.Goods;
 import com.md.pojo.goods.GoodsAttr;
 import com.md.pojo.goods.GoodsPics;
+import com.md.pojo.goods.Goods_2;
 import com.md.service.goods.SpGoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -144,6 +145,8 @@ public class SpGoodsServiceImpl implements SpGoodsService {
         //计算开始查询的位置
         int a = pagesize*(Integer.parseInt(pagenum) -1);
         List<Goods> goods = goodsDao.findByLiskeName(query,a,pagesize);
+        List<Goods> goods2 = goodsDao.find();
+        System.out.println(goods2);
         return goods;
     }
 
