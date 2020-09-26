@@ -48,7 +48,6 @@ public class ReportServiceImpl implements ReportService {
         for (String name : dataName) {
             Series series = new Series();
             List<Integer> dataUsers = reportDao.findReportByName(name);// 找到用户数
-            System.out.println(dataUsers);
             series.setAreaStyle(areaStyle);
             series.setName(name);
             series.setData(dataUsers);

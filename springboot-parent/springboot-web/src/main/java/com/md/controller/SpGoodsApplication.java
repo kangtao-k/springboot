@@ -35,12 +35,12 @@ public class SpGoodsApplication {
      */
     @GetMapping(value = "/goods")
     public Result findAllGoods(@RequestParam String pagenum,
-                               @RequestParam Integer pagesize, @RequestParam(required = false) String query) throws Exception {
+                               @RequestParam Integer pagesize, String query) throws Exception {
         List<Goods> skus ;
         PageResult result ;
         Result r ;
-        if (query == null) {
-            Long total = goodsService.findGoodsNum();
+        if (query.length()==0) {
+            Long total = goodsService.findGoodsNum().longValue();
             Integer num = Integer.parseInt(pagenum);
             skus = goodsService.findAll(num, pagesize);// 分页查询全部产品
             result = PageResult.succ(total, pagenum, skus);// 返回当前页码和总页数

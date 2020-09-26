@@ -24,7 +24,8 @@ public class SpGoodsServiceImpl implements SpGoodsService {
     @Override
     public List<Goods> findAll(Integer pageNum, Integer pageSize) throws Exception {
         int a = pageSize * (pageNum - 1);// 开始查询值
-        return goodsDao.findAll(a,pageSize);
+        List<Goods> list = goodsDao.findAll(a, pageSize);
+        return list;
     }
 
     @Override
@@ -134,7 +135,7 @@ public class SpGoodsServiceImpl implements SpGoodsService {
     }
 
     @Override
-    public Long findGoodsNum() throws Exception {
+    public Integer findGoodsNum() throws Exception {
         return goodsDao.findGoodsNum();
     }
 

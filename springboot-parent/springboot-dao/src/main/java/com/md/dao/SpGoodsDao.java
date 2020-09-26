@@ -14,7 +14,7 @@ public interface SpGoodsDao {
 
     //    查询所有的产品信息
     @Select("select * from sp_goods limit #{a},#{pageSize}")
-    public List<Goods> findAll(@Param("a") int a, @Param("pageSize") Integer pageSize) throws Exception;
+    List<Goods> findAll(@Param("a") int a, @Param("pageSize") Integer pageSize) throws Exception;
 
     @Insert("insert into sp_goods(goods_id,goods_name,goods_price,goods_number,goods_weight,cat_one_id,cat_two_id,cat_three_id," +
             "goods_introduce,add_time,upd_time,goods_big_logo,goods_small_logo,is_del) " +
@@ -68,7 +68,7 @@ public interface SpGoodsDao {
     void savePics(@Param("picsUrl") String picsUrl);
 
     @Select("select count(*) from sp_goods")
-    Long findGoodsNum();
+    Integer findGoodsNum();
 
     @Insert("insert into sp_goods_attr values(null,#{goodsId},#{attr_id},#{attr_value},0.00)")
     void addGoodsAttrByGoodsId(@Param("attr_id") Integer attr_id,@Param("attr_value") String attr_value,
