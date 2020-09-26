@@ -57,10 +57,7 @@ public class ManagerController {
     //查询所有用户
     @GetMapping(value = "/users")
     public Result findUser(String query, @RequestParam(required = true) Integer pagenum,
-                           @RequestParam(required = true) Integer pagesize,
-                           HttpServletRequest request) throws Exception {
-//        从请求头信息中获取token数据
-//        request.getHeader()
+                           @RequestParam(required = true) Integer pagesize) throws Exception {
         PageObj obj = null;
         if (query == null) {//参数为空
             obj = managerService.pagelist(pagenum, pagesize);

@@ -2,6 +2,7 @@ package com.md.service.goods.impl;
 
 import com.md.dao.SpGoodsDao;
 import com.md.entity.bo.AddGoods;
+import com.md.entity.other.AddAttrs;
 import com.md.entity.other.Attrs;
 import com.md.pojo.goods.Goods;
 import com.md.pojo.goods.GoodsAttr;
@@ -30,10 +31,10 @@ public class SpGoodsServiceImpl implements SpGoodsService {
     public Goods addGoods(AddGoods goods) throws Exception {
         Goods iGoods = new Goods();
         iGoods.setGoods_name(goods.getGoods_name());
-        iGoods.setGoods_price(goods.getGoods_price());
-        iGoods.setGoods_number(goods.getGoods_number());
+        iGoods.setGoods_price(Integer.parseInt(goods.getGoods_price()));
+        iGoods.setGoods_number(Integer.parseInt(goods.getGoods_number()));
         iGoods.setGoods_introduce(goods.getGoods_introduce());
-        iGoods.setGoods_weight(goods.getGoods_weight());
+        iGoods.setGoods_weight(Integer.parseInt(goods.getGoods_weight()));
         String[] cats = goods.getGoods_cat().split(",");
         iGoods.setCat_one_id(Integer.parseInt(cats[0]));
         iGoods.setCat_two_id(Integer.parseInt(cats[1]));
@@ -43,53 +44,22 @@ public class SpGoodsServiceImpl implements SpGoodsService {
         iGoods.setAdd_time(addtime);
         iGoods.setUpd_time(addtime);
         goodsDao.addGoods(iGoods);
+        Integer goodsId = goodsDao.findGoodsIdByName(goods.getGoods_name());
 
-        GoodsAttr attr = new GoodsAttr();
-        GoodsPics pics = new GoodsPics();
-//        获取商品属性
-        ArrayList<HashMap<String, String>> attrs = goods.getAttrs();
-        for (HashMap<String, String> map : attrs) {
-            Set<String> strings = map.keySet();
-            for (String key : strings) {
-                if ("attr_id".equals(key)) {
-                    String value = map.get(key);
-                    attr.setAttr_id(Integer.parseInt(value));
-                }
-                if ("attr_value".equals(key)) {
-                    String value = map.get(key);
-                    attr.setAttr_value(value);
-                }
-            }
+//        添加商品属性
+        ArrayList<AddAttrs> attrs = goods.getAttrs();
+        for (AddAttrs attr : attrs) {
+            goodsDao.addGoodsAttrByGoodsId(attr.getAttr_id(),attr.getAttr_value(),goodsId);
         }
-//        查询刚刚插入的商品的商品id
-        Integer goodsIdByName = goodsDao.findGoodsIdByName(goods.getGoods_name());
-        attr.setGoods_id(goodsIdByName);// 将id放入商品属性表中
-        pics.setGoods_id(goodsIdByName);// 将id放入商品图片表中
-//        获取商品图片
+
+//        添加图片
         ArrayList<HashMap<String, String>> goodsPics = goods.getPics();
-        for (HashMap<String, String> goodsPic : goodsPics) {
-            Set<String> set = goodsPic.keySet();
-            for (String key : set) {
-                if ("pic".equals(key)) {
-                    pics.setPics_big(goodsPic.get(key));
-                    pics.setPics_mid(goodsPic.get(key));
-                    pics.setPics_sma(goodsPic.get(key));
-                }
-                if ("pic_big".equals(key)) {
-                    pics.setPics_big(goodsPic.get(key));
-                }
-                if ("pic_mid".equals(key)) {
-                    pics.setPics_mid(goodsPic.get(key));
-                }
-                if ("pic_sma".equals(key)) {
-                    pics.setPics_sma(goodsPic.get(key));
-                }
-            }
+        for (HashMap<String, String> pics : goodsPics) {
+            String pic = pics.get("pic");
+            goodsDao.addGoodsPics(goodsId,pic);
         }
-        goodsDao.addGoodsPics(pics);
-        goodsDao.addGoodsAttr(attr);
-//        返回刚刚查询的商品
-        Goods goodsNow = goodsDao.findGoodsById(goodsIdByName);
+//        返回刚刚添加的商品
+        Goods goodsNow = goodsDao.findGoodsById(goodsId);
         return goodsNow;
     }
 
