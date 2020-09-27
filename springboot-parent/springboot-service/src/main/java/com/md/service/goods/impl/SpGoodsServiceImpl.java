@@ -148,4 +148,9 @@ public class SpGoodsServiceImpl implements SpGoodsService {
         return goods;
     }
 
+    @Override
+    public Integer findTotalByName(String query) throws Exception {
+        return goodsDao.findTotalByName(query);
+    }
+
 }

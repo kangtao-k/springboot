@@ -48,7 +48,8 @@ public class SpGoodsApplication {
         } else {
             //参数查询
             skus = goodsService.findByName(query, pagenum, pagesize);
-            result = PageResult.succ((long) skus.size(), pagenum, skus);
+            Integer total = goodsService.findTotalByName(query);
+            result = PageResult.succ((long)total, pagenum, skus);
             r = Result.succ(meta,result);
         }
         return r;

@@ -41,4 +41,6 @@ public interface SpGoodsService {
     Integer findGoodsNum() throws Exception;
 
     List<Goods> findByName(String query, String pagenum, Integer pagesize) throws Exception;
+
+    Integer findTotalByName(String query) throws Exception;
 }

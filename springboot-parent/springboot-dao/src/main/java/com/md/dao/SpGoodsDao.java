@@ -78,4 +78,6 @@ public interface SpGoodsDao {
     @Select("select * from sp_goods where goods_name like '%${query}%' limit #{a},#{pagesize}")
     List<Goods> findByLiskeName(@Param("query") String query,@Param("a") Integer a, @Param("pagesize") Integer pagesize) throws Exception;
 
+    @Select("select count(*) from sp_goods where goods_name like '%${query}%'")
+    Integer findTotalByName(@Param("query") String query) throws Exception;
 }

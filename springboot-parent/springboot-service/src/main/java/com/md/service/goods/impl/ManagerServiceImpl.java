@@ -122,7 +122,7 @@ public class ManagerServiceImpl implements ManagerService {
         Managerfind find = new Managerfind();
         //查出所有数据
         List<Manager> managers = managerDao.findAllManager(a, pagesize);
-        Integer total = managerDao.mannum();
+        Integer total =managerDao.mannum();
 
         List<Managerfind> lists = new ArrayList<>();
         for (Manager manager : managers) {
@@ -151,8 +151,8 @@ public class ManagerServiceImpl implements ManagerService {
     public PageObj pagelistquery(String query, Integer pagenum, Integer pagesize) throws Exception {
         int a = pagesize * (pagenum - 1);
         List<Manager> managers = managerDao.findByLikeName(query, a, pagesize);
-        Integer total = managerDao.manfindByName(query);
-        Managerfind find = new Managerfind();
+        Integer total = managerDao.findTotalByLikeName(query);
+        Managerfind find = null;
         List<Managerfind> lists = new ArrayList<>();
         for (Manager manager : managers) {
             find = new Managerfind();
