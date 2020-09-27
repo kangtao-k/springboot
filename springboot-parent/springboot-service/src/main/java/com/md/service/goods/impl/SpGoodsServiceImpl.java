@@ -145,8 +145,6 @@ public class SpGoodsServiceImpl implements SpGoodsService {
         //计算开始查询的位置
         int a = pagesize*(Integer.parseInt(pagenum) -1);
         List<Goods> goods = goodsDao.findByLiskeName(query,a,pagesize);
-        List<Goods> goods2 = goodsDao.find();
-        System.out.println(goods2);
         return goods;
     }
 

@@ -76,8 +76,6 @@ public interface SpGoodsDao {
                                @Param("goodsId") Integer goodsId);
 
     @Select("select * from sp_goods where goods_name like '%${query}%' limit #{a},#{pagesize}")
-    List<Goods> findByLiskeName(@Param("query") String query, @Param("pagesize") Integer pagesize, @Param("a") Integer a) throws Exception;
+    List<Goods> findByLiskeName(@Param("query") String query,@Param("a") Integer a, @Param("pagesize") Integer pagesize) throws Exception;
 
-    @Select("select * from sp_goods where goods_name like '%南极%' limit 1,10")
-    List<Goods> find();
 }
