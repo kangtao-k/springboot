@@ -16,9 +16,9 @@ public interface CategoryDao {
     @Select("select * from sp_category where cat_level=#{level} and cat_pid=#{pid}")
     List<ChildrenCats> findCats(@Param("level") Integer level, @Param("pid") Integer pid);
 
-    @Insert("insert into sp_category values(null,#{cat_name},#{cat_pid},#{cat_level},#{i},null,null)")
+    @Insert("insert into sp_category values(null,#{cat_name},#{cat_pid},#{cat_level},0,null,null)")
     void addCategories(@Param("cat_pid") Integer cat_pid, @Param("cat_name") String cat_name,
-                       @Param("cat_level") Integer cat_level, int i);
+                       @Param("cat_level") Integer cat_level);
 
     @Select("select cat_id from sp_category where cat_name=#{cat_name}")
     Integer findCateIdByName(@Param("cat_name") String cat_name);

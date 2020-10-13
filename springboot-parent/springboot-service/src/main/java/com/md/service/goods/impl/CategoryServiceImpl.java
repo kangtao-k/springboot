@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category addCategories(Integer cat_pid, String cat_name, Integer cat_level) throws Exception {
-        categoryDao.addCategories(cat_pid,cat_name,cat_level,0);
+        categoryDao.addCategories(cat_pid,cat_name,cat_level);
 //        查询刚刚插入的数据的id
         Integer cateId = categoryDao.findCateIdByName(cat_name);
         Category category = categoryDao.findCatsById(cateId);
