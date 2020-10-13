@@ -42,7 +42,7 @@ public class RoleServiceImpl implements RoleService {
             String pids = role.getPs_ids();
 //            System.out.println(pids.length() == 0);
             if (pids.length() != 0) {
-                rolePerInfo = fengzhuang(role, pids, permissionDao, apiDao);
+                rolePerInfo = fengzhuang(pids, permissionDao, apiDao);
             }
             rolePerInfo.setId(role.getRole_id());
             rolePerInfo.setRoleName(role.getRole_name());
@@ -254,7 +254,7 @@ public class RoleServiceImpl implements RoleService {
         return ids;
     }
 
-    public static RolePerInfo fengzhuang(Role role, String pids, IPermissionDao permissionDao, IPer_apiDao apiDao) throws Exception {
+    public static RolePerInfo fengzhuang(String pids, IPermissionDao permissionDao, IPer_apiDao apiDao) throws Exception {
         Map<Integer, PerList> mapone = new HashMap<>();   //放1级权限
         Map<String, PerList> maptwo = new HashMap<>();  //2级
         Map<String, PerList> mapthree = new HashMap<>();  //3级

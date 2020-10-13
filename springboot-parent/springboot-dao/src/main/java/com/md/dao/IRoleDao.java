@@ -34,4 +34,7 @@ public interface IRoleDao {
 
     @Select("select ps_ids from sp_role where role_id=#{roleId}")
     String getIdsById(@Param("roleId") Integer roleId) throws Exception;
+
+    @Select("select ps_ids from sp_role where role_id=(select role_id from sp_manager where mg_id=#{id})")
+    String getIdsByMgId(@Param("id") Integer id) throws Exception;
 }

@@ -12,5 +12,5 @@ public interface PermissionService {
 
     List<PerTree> findPertree() throws Exception;
 
-    List<MenusPer> menusPer()throws Exception;
+    List<MenusPer> menusPer(Integer id) throws Exception;
 }

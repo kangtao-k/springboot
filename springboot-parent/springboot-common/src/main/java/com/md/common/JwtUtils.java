@@ -58,4 +58,8 @@ public class JwtUtils {
         Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
         return claims;
     }
+
+    public static void main(String[] args) {
+
+    }
 }

@@ -1,7 +1,9 @@
 package com.md.service.goods.impl;
 
+import com.md.dao.IManagerDao;
 import com.md.dao.IPer_apiDao;
 import com.md.dao.IPermissionDao;
+import com.md.dao.IRoleDao;
 import com.md.entity.UserVo.MenusPer;
 import com.md.entity.UserVo.PerTree;
 import com.md.entity.UserVo.PerTreeLast;
@@ -26,6 +28,12 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Autowired
     private IPer_apiDao apiDao;
+
+    @Autowired
+    private IRoleDao roleDao;
+
+    @Autowired
+    private IManagerDao managerDao;
 
     @Override
     public List<Perfind> findPerlist() throws Exception {
@@ -100,34 +108,41 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public List<MenusPer> menusPer() throws Exception {
-        List<Permission> secondPers = perDao.findByNotPid();// 查出第二层的菜单列表
-        List<Permission> pers = perDao.findByPid();// 查询出最顶层的菜单列表
-        List<MenusPer> menusList = new ArrayList<>();
-//        将per转为Men
-        for (Permission permission : pers) {
+    public List<MenusPer> menusPer(Integer id) throws Exception {
+        //根据用户的id查询出角色id对应的权限ids
+        String ids = roleDao.getIdsByMgId(id);
+        //根据权限ids查询出所有的1级,2级和3级权限
+        List<MenusPer> listpers = new ArrayList<>();
+        //查出1级权限
+        List<Permission> pers1 = perDao.findByIdslev(ids, "0");
+        for (Permission permission : pers1) {
             MenusPer menus = perToMen(apiDao, permission);
-            menusList.add(menus);
+            listpers.add(menus);
         }
-        List<MenusPer> secondList = new ArrayList<>();
-//        将per转为Men
-        for (Permission secondPer : secondPers) {
-            MenusPer secondMenusPer = perToMen(apiDao, secondPer);
-            secondList.add(secondMenusPer);
+        for (MenusPer listper : listpers) {
+            menusPersTest(listper, perDao, apiDao, ids, 1);
         }
-//        将子集套入父级
-        for (MenusPer menusPer : menusList) {
-            List<MenusPer> list = new ArrayList<>();// 转接list
-            for (MenusPer secondPer : secondList) {
-                if (menusPer.getId().equals(secondPer.getPid())) {
-                    list.add(secondPer);
+        return listpers;
+    }
+
+    //递归查询嵌套循环
+    public static void menusPersTest(MenusPer pers, IPermissionDao perDao, IPer_apiDao apiDao, String ids, Integer level) throws Exception {
+        if (level < 3) {
+            List<Permission> pers1 = perDao.findByIdslev(ids, level.toString());
+            if (pers1 != null) {
+                MenusPer menus = null;
+                for (Permission permission : pers1) {
+                    if (permission.getPs_pid().equals(pers.getId())) {
+                        menus = perToMen(apiDao, permission);
+                        pers.getChildren().add(menus);
+                    }
                 }
             }
-            menusPer.setChildren(list);
+            List<MenusPer> children = pers.getChildren();
+            for (MenusPer per : children) {
+                menusPersTest(per, perDao, apiDao, ids, level + 1);
+            }
         }
-//        按照MenusPer的order排序
-        menusList = menusList.stream().sorted(Comparator.comparing(MenusPer::getOrder)).collect(Collectors.toList());
-        return menusList;
     }
 
     //将Permission对象的值放进PerTree里

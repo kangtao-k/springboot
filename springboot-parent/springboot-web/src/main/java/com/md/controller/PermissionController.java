@@ -23,6 +23,7 @@ public class PermissionController {
 
     @Autowired
     private PermissionService permissionService;
+
     @Autowired
     private ManagerService managerService;
 
@@ -43,18 +44,16 @@ public class PermissionController {
 
     @GetMapping("/menus")
     public Result menusPer(HttpServletRequest request) throws Exception{
+
         String authorization = request.getHeader("Authorization");
         if (StringUtils.isEmpty(authorization)) {
-//            系统未捕捉到请求头信息
+            //系统未捕捉到请求头信息
             throw new Exception("校验失败，请重新登录");
         }
-        /*String token = authorization.replace("Bearer ", "");// 替换Bearer+空格
-//        解析token
-        Claims claims = jwtUtils.parseJwt(token);
-//        获取claims
-        String userId = claims.getId();
-        ManagerLogin manager = managerService.findById(Integer.parseInt(userId));*/
-        List<MenusPer> menus = permissionService.menusPer();
+        //查出用户的id
+        Integer id = Integer.parseInt(jwtUtils.parseJwt(authorization).getId());
+        List<MenusPer> menus = permissionService.menusPer(id);
+
         return Result.succ("获取菜单列表成功",menus);
     }
 }
